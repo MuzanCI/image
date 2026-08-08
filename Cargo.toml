@@ -1,0 +1,25 @@
+[package]
+name = "muzanci-image"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+async-trait = "0.1.91"
+futures = "0.3.33"
+hex = "0.4.3"
+regex = "1.13.1"
+reqwest = { version = "0.13.4", features = ["json", "stream"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+serde_with = "3.21.0"
+sha2 = "0.11.0"
+strum = { version = "0.28.0", features = ["derive"] }
+thiserror = "2.0.19"
+tokio = { version = "1.53.1", features = ["io-util"] }
+tokio-util = { version = "0.7.19", features = ["io"] }
+tracing = "0.1.44"
+url = "2.5.8"
+
+[lib]
+name = "muzanci_image"
+path = "src/lib.rs"
