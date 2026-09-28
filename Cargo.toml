@@ -23,3 +23,6 @@ url = "2.5.8"
 [lib]
 name = "muzanci_image"
 path = "src/lib.rs"
+
+[lints.clippy]
+new_without_default = "allow"

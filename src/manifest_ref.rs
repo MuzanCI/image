@@ -49,7 +49,7 @@ impl ManifestRef {
                 return Err(ManifestRefError::InvalidDigest(DigestError::Empty));
             }
         };
-        let url = Url::parse(&url).map_err(|e| ManifestRefError::InvalidUrl(e))?;
+        let url = Url::parse(&url).map_err(ManifestRefError::InvalidUrl)?;
         Ok(url)
     }
 }
@@ -86,7 +86,7 @@ impl FromStr for ManifestRef {
             // Wrap digest error with manifest ref error to provide better context
             let digest = second[1..]
                 .parse::<Digest>()
-                .map_err(|e| ManifestRefError::InvalidDigest(e))?;
+                .map_err(ManifestRefError::InvalidDigest)?;
             (Some(digest), first)
         } else {
             (None, s)
@@ -96,7 +96,7 @@ impl FromStr for ManifestRef {
             let (first, second) = s.split_at(pos);
             let tag = second[1..]
                 .parse::<Tag>()
-                .map_err(|e| ManifestRefError::InvalidTag(e))?;
+                .map_err(ManifestRefError::InvalidTag)?;
             (first.to_string(), Some(tag))
         } else {
             (s.to_string(), None)
@@ -107,7 +107,7 @@ impl FromStr for ManifestRef {
             Regex::new(r"^[a-z0-9]+((\.|_|__|-+)[a-z0-9]+)*(\/[a-z0-9]+((\.|_|__|-+)[a-z0-9]+)*)*$")
                 .unwrap()
         });
-        if !NAMESPACE_REGEX.is_match(&namespace.as_bytes()) {
+        if !NAMESPACE_REGEX.is_match(namespace.as_bytes()) {
             return Err(ManifestRefError::InvalidNamespace(namespace));
         }
 
@@ -391,27 +391,27 @@ mod test {
             },
             TestCase {
                 input: "Invalid/Path/Format/".to_string(),
-                expected: Err(ManifestRefError::InvalidNamespace("Invalid/Path/Format/".to_string()).into()),
+                expected: Err(ManifestRefError::InvalidNamespace("Invalid/Path/Format/".to_string())),
             },
             TestCase {
                 input: "name:Invalid Tag Format".to_string(),
-                expected: Err(ManifestRefError::InvalidTag(TagError::InvalidFormat("Invalid Tag Format".to_string())).into()),
+                expected: Err(ManifestRefError::InvalidTag(TagError::InvalidFormat("Invalid Tag Format".to_string()))),
             },
             TestCase {
                 input: "name@InvalidDigestFormat".to_string(),
-                expected: Err(ManifestRefError::InvalidDigest(DigestError::InvalidFormat("InvalidDigestFormat".to_string())).into()),
+                expected: Err(ManifestRefError::InvalidDigest(DigestError::InvalidFormat("InvalidDigestFormat".to_string()))),
             },
             TestCase {
                 input: "name@unknownalgo:0123456789abcdef".to_string(),
-                expected: Err(ManifestRefError::InvalidDigest(DigestError::UnsupportedAlgorithm("unknownalgo".to_string()).into()).into()),
+                expected: Err(ManifestRefError::InvalidDigest(DigestError::UnsupportedAlgorithm("unknownalgo".to_string()))),
             },
             TestCase {
                 input: "name@sha256:invalidsha256hex".to_string(),
-                expected: Err(ManifestRefError::InvalidDigest(DigestError::InvalidSha256Hex("invalidsha256hex".to_string()).into()).into()),
+                expected: Err(ManifestRefError::InvalidDigest(DigestError::InvalidSha256Hex("invalidsha256hex".to_string()))),
             },
             TestCase {
                 input: "name@sha512:invalidsha512hex".to_string(),
-                expected: Err(ManifestRefError::InvalidDigest(DigestError::InvalidSha512Hex("invalidsha512hex".to_string()).into()).into()),
+                expected: Err(ManifestRefError::InvalidDigest(DigestError::InvalidSha512Hex("invalidsha512hex".to_string()))),
             },
         ];
 

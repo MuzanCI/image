@@ -173,9 +173,7 @@ impl RegistryClient for ReqwestRegistryClient {
             tracing::error!("{e}");
             return Err(RegistryClientError(e));
         }
-        let stream = res
-            .bytes_stream()
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e));
+        let stream = res.bytes_stream().map_err(std::io::Error::other);
         let reader = tokio_util::io::StreamReader::new(stream);
         Ok(Box::new(reader))
     }
